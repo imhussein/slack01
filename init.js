@@ -22,7 +22,12 @@ function sendSWMessage(target) {
   });
 }
 
-function onMessage(e) {}
+// On Message Handler
+function onMessage(e) {
+  const { data } = e;
+  if (data.requestStatusUpdate) {
+  }
+}
 
 // Init Service Worker Registeration And On Controller Change event
 async function initServiceWorker() {
@@ -63,5 +68,3 @@ window.onoffline = function() {
 };
 
 initServiceWorker();
-
-
