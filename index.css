@@ -1,0 +1,19 @@
+body {
+  font-family: "Operator Mono";
+}
+
+.status-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.status-icon.online {
+  background-color: green;
+}
+
+.status-icon.offline {
+  background-color: red;
+}
