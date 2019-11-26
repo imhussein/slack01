@@ -10,7 +10,15 @@ const uuid = require("uuid");
 
 app.use(cors());
 app.use(express.json());
-app.use("/assets", express.static(__dirname));
+app.use(express.static(rootDir));
+
+app.get("/", function(req, res) {
+  res.sendFile(path.join(rootDir, "index.html"));
+});
+
+app.get("/add", function(req, res) {
+  res.sendFile(path.join(rootDir, "add.html"));
+});
 
 function readData(fn) {
   fs.readFile(path.join(rootDir, "posts.json"), { encoding: "utf-8" }, function(
@@ -25,13 +33,13 @@ function readData(fn) {
   });
 }
 
-app.get("/", function(req, res) {
+app.get("/api", function(req, res) {
   readData(function(data) {
     return res.json({ data });
   });
 });
 
-app.post("/", function(req, res) {
+app.post("/api", function(req, res) {
   readData(function(data) {
     let newData = data;
     newData.push({

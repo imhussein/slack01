@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function getData() {
   let xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:5000", true);
+  xhr.open("GET", "http://localhost:5000/api", true);
   xhr.onload = function() {
     let res = JSON.parse(this.response);
     if (document.querySelectorAll(".collapsible").length) {
@@ -34,7 +34,7 @@ if (document.forms.length) {
     .addEventListener("submit", function(e) {
       e.preventDefault();
       let xhr = new XMLHttpRequest();
-      xhr.open("POST", "http://localhost:5000", true);
+      xhr.open("POST", "http://localhost:5000/api", true);
       xhr.setRequestHeader("Content-Type", "application/json");
       xhr.onload = function() {
         console.log(this.response);

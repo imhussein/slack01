@@ -26,6 +26,7 @@ function sendSWMessage(target) {
 function onMessage(e) {
   const { data } = e;
   if (data.requestStatusUpdate) {
+    sendSWMessage(e.ports && e.ports[0]);
   }
 }
 
@@ -41,15 +42,19 @@ async function initServiceWorker() {
     swRegisteration.waiting ||
     swRegisteration.active;
 
+  sendSWMessage(svcWorker);
+
   // Get Service Worker From Contoller Change And New Service Worker is Active
   navigator.serviceWorker.oncontrollerchange = function() {
     // Run Skip Waiting Phase From Service Worker On Installing New Service Worker
     svcWorker = navigator.serviceWorker.controller;
+    sendSWMessage(svcWorker);
   };
 
   // Listen To Messages Coming From Service Worker
   navigator.serviceWorker.onmessage = function(e) {
-    console.log(e);
+    console.log("New Service Worker is controlling the clients");
+    sendSWMessage(svcWorker);
   };
 }
 
@@ -58,6 +63,7 @@ window.ononline = function(e) {
   isOnline = true;
   statusIcon.classList.add("online");
   statusIcon.classList.remove("offline");
+  sendSWMessage();
 };
 
 // Check For Offline Event
@@ -65,6 +71,7 @@ window.onoffline = function() {
   isOnline = false;
   statusIcon.classList.add("offline");
   statusIcon.classList.remove("online");
+  sendSWMessage();
 };
 
 initServiceWorker();
