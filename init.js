@@ -48,12 +48,12 @@ async function initServiceWorker() {
   navigator.serviceWorker.oncontrollerchange = function() {
     // Run Skip Waiting Phase From Service Worker On Installing New Service Worker
     svcWorker = navigator.serviceWorker.controller;
+    console.log("New Service Worker is controlling the clients");
     sendSWMessage(svcWorker);
   };
 
   // Listen To Messages Coming From Service Worker
   navigator.serviceWorker.onmessage = function(e) {
-    console.log("New Service Worker is controlling the clients");
     sendSWMessage(svcWorker);
   };
 }
