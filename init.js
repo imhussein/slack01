@@ -53,9 +53,7 @@ async function initServiceWorker() {
   };
 
   // Listen To Messages Coming From Service Worker
-  navigator.serviceWorker.onmessage = function(e) {
-    sendSWMessage(svcWorker);
-  };
+  navigator.serviceWorker.onmessage = onMessage;
 }
 
 // Check For Online Event

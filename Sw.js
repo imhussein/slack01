@@ -1,4 +1,4 @@
-let version = 1;
+let version = 6;
 let isOnline = true;
 let isAuthenticated = false;
 let versionName = `Ramblings-${version}`;
@@ -17,6 +17,39 @@ let urlsToCache = {
 self.addEventListener("install", onInstall);
 self.addEventListener("activate", onActivate);
 self.addEventListener("message", onMessage);
+self.addEventListener("fetch", onFetch);
+
+function onFetch(event) {
+  event.respondWith(router(event.request));
+}
+
+async function router(req) {
+  var url = new URL(req.url);
+  var reqUrl = url.pathname;
+  var cache = await caches.open(versionName);
+  if (url.origin == location.origin) {
+    let res;
+    try {
+      let fetchOptions = {
+        credentials: "omit",
+        headers: req.headers,
+        method: req.method,
+        cache: "no-store"
+      };
+      res = await fetch(req.url, fetchOptions);
+      if (res && res.ok) {
+        await cache.put(reqUrl, res.clone());
+        return res;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    res = await cache.match(reqUrl);
+    if (res) {
+      return res.clone();
+    }
+  }
+}
 
 function onMessage(e) {
   const { data } = e;
@@ -61,6 +94,7 @@ function onActivate(e) {
 }
 
 async function handleActivation() {
+  await clearCache();
   await clients.claim();
   console.log(`Service Worker Version v${version} is Activating`);
 }
@@ -87,6 +121,23 @@ async function cacheLoggedOutFiles(forceReload = false) {
       } catch (error) {
         console.log(error);
       }
+    })
+  );
+}
+
+async function clearCache() {
+  let cacheNames = await caches.keys();
+  let oldCaches = cacheNames.filter(function filterOldCache(cacheName) {
+    if (/^Ramblings-\d+/.test(cacheName)) {
+      let [_, cacheVersion] = cacheName.match(/^Ramblings-(\d+)$/);
+      cacheVersion =
+        cacheVersion !== null ? Number(cacheVersion) : cacheVersion;
+      return cacheVersion > 0 && cacheVersion !== version;
+    }
+  });
+  return Promise.all(
+    oldCaches.map(function clearOldCacheNames(cache) {
+      return caches.delete(cache);
     })
   );
 }
